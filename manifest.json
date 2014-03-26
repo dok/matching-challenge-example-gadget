@@ -1,0 +1,12 @@
+{
+  "username": "versal",
+  "name": "demo-sorter",
+  "version": "0.0.482",
+  "title": "Sorter [DEMO]",
+  "description": "Sorter [DEMO]",
+  "author": "Versal",
+  "defaultConfig": {
+    "__launcher": "iframe"
+  },
+  "defaultUserState": {}
+}
