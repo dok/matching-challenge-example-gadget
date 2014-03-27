@@ -39,6 +39,26 @@ samples =
 
     { prompt, answers, scoring }
 
+  versalers: ->
+    prompt = _.map versalers, (versaler) ->
+      name:
+        type: 'text'
+        data:
+          value: _.first versaler.name.split(' ')
+      value:
+        type: 'image'
+        data:
+          value: "https://versal.com/assets/img/about/#{versaler.image}"
+
+    answers = _.map versalers, (versaler) ->
+      type: 'image'
+      data:
+        value: "https://versal.com/assets/img/about/#{versaler.image}"
+
+    scoring = 'partial'
+
+    { prompt, answers, scoring }
+
 window.samples =
   getChallenge: (name) ->
     return samples[name]()

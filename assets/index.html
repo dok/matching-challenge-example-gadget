@@ -9,94 +9,10 @@
     <script src="lib/samples.js"></script>
     <script src="lib/sample_data/colors.js"></script>
     <script src="lib/sample_data/spanish_phrases.js"></script>
+    <script src="lib/sample_data/versalers.js"></script>
     <script src="lib/views/sorter.js"></script>
-
-    <style>
-      .matcher {
-        width: 100%;
-        height: 200px;
-      }
-      .question, .choice {
-        vertical-align: top;
-        padding: 10px;
-      }
-      .question {
-        width: 40%;
-        background-color: #F6E7F5;
-      }
-      .spoiler {
-        color: gray;
-        font-size: 0.9em;
-      }
-      .choice {
-        width: 60%;
-        background-color: #D1E8EE;
-      }
-      .choice:hover {
-        background-color: #FEFAF6;
-        cursor: pointer;
-      }
-      .score {
-        font-size: 3em;
-      }
-    </style>
+    <script src="lib/events.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/main.css">
   </head>
-  <body>
-    <script>
-      var sorter, attributes, learnerState;
-      var attached = false;
-
-      var incomingEvents = [
-        'attached',
-        'attributesChanged',
-        'learnerStateChanged',
-        'challengesChanged',
-        'scoreChanged',
-        'setEditable'
-      ];
-
-      var outgoingEvents = [
-        'setChallenges',
-        'scoreChallenges'
-      ];
-
-      window.addEventListener('message', function(event) {
-        var message;
-        try {
-          message = JSON.parse(event.data);
-        } catch(e) {}
-
-        if (!message) {
-          return;
-        }
-
-        if (message.event === 'attached') {
-          attached = true;
-
-          sorter = SorterView({attributes: attributes, learnerState: learnerState});
-          React.renderComponent(sorter, document.body);
-
-          vent.on('all', function(event, data) {
-            if (_.contains(outgoingEvents, event)) {
-              window.parent.postMessage(JSON.stringify({ event: event, data: data }), '*');
-            }
-          });
-        } else if (message.event === 'detached') {
-          vent.off('all'); // TODO Works?
-
-        } else if (_.contains(incomingEvents, message.event)) {
-
-          if (message.event === 'attributesChanged') {
-            attributes = message.data;
-          } else if (message.event === 'learnerStateChanged') {
-            learnerState = message.data;
-          } else {
-            console.log('index', message.event, message.data);
-            vent.trigger(message.event, message.data);
-          }
-
-        }
-      });
-    </script>
-  </body>
+  <body></body>
 </html>

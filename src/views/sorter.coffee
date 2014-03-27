@@ -1,28 +1,65 @@
 `/** @jsx React.DOM */`
 
 AuthorView = React.createClass
-  handleClick: ->
-    challenges = _.clone @props.challenges
-    challenges.push samples.getChallenge 'spanishPhrases'
-    vent.trigger 'setChallenges', challenges
+
+  handleClick: (challengeName) ->
+    challenge = samples.getChallenge challengeName
+    vent.trigger 'setLearnerState', { challengeName }
+    vent.trigger 'setChallenges', [challenge]
+    @props.handleReset()
 
   render: ->
-    if @props.challenges.length
+    status = if @props.challenges.length
       `<div>
-        Challenge loaded, try learner view.
+        <strong>{this.props.challengeName}</strong> challenge loaded
       </div>`
     else
-      `<div>
-        <div>Authoring placeholder</div>
-        <button onClick={this.handleClick}>Add challenge</button>
-      </div>`
+      `<div></div>`
+
+    `<div>
+      {status}
+      <div>
+        <button onClick={this.handleClick.bind(this, 'versalers')}>Use versalers challenge</button>
+      </div>
+      <div>
+        <button onClick={this.handleClick.bind(this, 'spanishPhrases')}>Use Spanish phrase challenge</button>
+      </div>
+      <div>
+        <button onClick={this.handleClick.bind(this, 'colors')}>Use colors challenge</button>
+      </div>
+    </div>`
+
+TextView = React.createClass
+  render: ->
+    `<div className="text">{this.props.data.value}</div>`
+
+ImageView = React.createClass
+  render: ->
+    `<img className="image" src={this.props.data.value}></img>`
+
+ColorView = React.createClass
+  componentDidMount: ->
+    @refs.color.getDOMNode().style.backgroundColor = "#{@props.data.value}"
+  componentDidUpdate: ->
+    @refs.color.getDOMNode().style.backgroundColor = "#{@props.data.value}"
+
+  render: ->
+    `<div className="color" ref="color">&nbsp;</div>`
 
 LearnerView = React.createClass
   handleClick: (index) ->
     @props.handleResponse @lineup[index]
 
+  renderComponent: (config) ->
+    switch config.type
+      when 'text'
+        `<TextView data={config.data} />`
+      when 'color'
+        `<ColorView data={config.data} />`
+      when 'image'
+        `<ImageView data={config.data} />`
+
   render: ->
-    console.log 'render learner view'
     currentPair = @props.pairs[@props.currentPairIndex]
 
     # a lineup of pairs to choose from
@@ -30,8 +67,10 @@ LearnerView = React.createClass
 
     # get a couple more criminals into the lineup
     allOtherPairs = _.without @props.pairs, currentPair
-    _lineup.push _.sample allOtherPairs
-    _lineup.push _.sample allOtherPairs
+    allOtherPairs = _.shuffle allOtherPairs
+    _lineup.push allOtherPairs.pop()
+    allOtherPairs = _.shuffle allOtherPairs
+    _lineup.push allOtherPairs.pop()
 
     # mix em up
     @lineup = _.shuffle _lineup
@@ -41,21 +80,20 @@ LearnerView = React.createClass
         <tbody>
           <tr>
             <td className="question" rowSpan="3">
-              <div>{currentPair.name.data.value}</div>
-              <div className="spoiler">spoiler: {currentPair.value.data.value}</div>
+              <div>Find <strong>{this.renderComponent(currentPair.name)}</strong> on the right.</div>
             </td>
             <td className="choice" onClick={this.handleClick.bind(this, 0)}>
-              {this.lineup[0].value.data.value}
+              {this.renderComponent(this.lineup[0].value)}
             </td>
           </tr>
           <tr>
             <td className="choice" onClick={this.handleClick.bind(this, 1)}>
-              {this.lineup[1].value.data.value}
+              {this.renderComponent(this.lineup[1].value)}
             </td>
           </tr>
           <tr>
             <td className="choice" onClick={this.handleClick.bind(this, 2)}>
-              {this.lineup[2].value.data.value}
+              {this.renderComponent(this.lineup[2].value)}
             </td>
           </tr>
         </tbody>
@@ -67,18 +105,23 @@ SorterView = React.createClass
     currentPairIndex: 0
     challenges: []
     editable: false
-    total: 0
+    totalScore: 0
+    responses: []
 
   componentWillMount: ->
-    @responses = []
-    vent.on 'scoreChanged', @handleScoreChanged
+    vent.on 'scoresChanged', @handleScoresChanged
     vent.on 'setEditable', @handleEditableness
     vent.on 'challengesChanged', @handleChallenges
+    vent.on 'learnerStateChanged', @handleLearnerStateChanged
+
+  componentDidMount: ->
+    vent.trigger 'setHeight', pixels: 260
 
   componentWillUnmount: ->
-    vent.off 'scoreChanged', @handleScoreChanged
+    vent.off 'scoresChanged', @handleScoresChanged
     vent.off 'setEditable', @handleEditableness
     vent.off 'challengesChanged', @handleChallenges
+    vent.off 'learnerStateChanged', @handleLearnerStateChanged
 
   handleChallenges: ({ challenges }) ->
     @setState { challenges }
@@ -86,42 +129,61 @@ SorterView = React.createClass
   handleEditableness: ({ editable }) ->
     @setState { editable }
 
-  handleScoreChanged: ({ scores, total }) ->
-    currentPairIndex = @state.currentPairIndex + 1
-    @setState { currentPairIndex, scores, total }
+  handleScoresChanged: ({ scores, totalScore, responses }) ->
+    currentPairIndex = _.first(responses)?.length || 0
+    @setState { currentPairIndex, scores, totalScore, responses }
+
+  handleLearnerStateChanged: (learnerState) ->
+    @setState _.pick learnerState, 'challengeName'
 
   handleResponse: (response) ->
     @scoreChallenge response.value
 
-  scoreChallenge: (response) ->
-    challenge = _.first @state.challenges
-    @responses[@state.currentPairIndex] = response
-    vent.trigger 'scoreChallenges', [ @responses ]
+  handleReset: ->
+    # NOTE might be something we want the API to do for us, e.g. { event: 'resetScores' }
+    vent.trigger 'scoreChallenges', [[]]
+
+  scoreChallenge: (_response) ->
+    responses = _.clone @state.responses
+    response = _.first(responses) || []
+
+    response[@state.currentPairIndex] = _response
+    vent.trigger 'scoreChallenges', [response]
 
   render: ->
     if @state.editable
       `<AuthorView
         challenges={this.state.challenges}
-        player={this.props.player} />`
+        challengeName={this.state.challengeName}
+        handleReset={this.handleReset} />`
 
     else if @state.challenges.length
       challenge = _.first @state.challenges
       pairs = challenge.prompt
-
-      score = Math.floor @state.total * 100
-      scoreDisplay = if @state.currentPairIndex
-        if @state.currentPairIndex < pairs.length
-          `<div className="score">{score}%</div>`
-        else
-          `<div className="score">{score}% Done!</div>`
-      else
-        `<div></div>`
 
       learnerDisplay = if @state.currentPairIndex < pairs.length
         `<LearnerView
           currentPairIndex={this.state.currentPairIndex}
           pairs={pairs}
           handleResponse={this.handleResponse} />`
+      else
+        `<div></div>`
+
+      resetDisplay =
+        `<button className="reset" onClick={this.handleReset}>Reset</button>`
+
+      score = Math.floor @state.totalScore * 100
+      scoreDisplay = if @state.currentPairIndex
+        if @state.currentPairIndex < pairs.length
+          `<div>
+            <div className="score">{score}%</div>
+            { resetDisplay }
+          </div>`
+        else
+          `<div>
+            <div className="score">{score}% Done!</div>
+            { resetDisplay }
+          </div>`
       else
         `<div></div>`
 
@@ -134,6 +196,6 @@ SorterView = React.createClass
       return display
 
     else
-      `<div>Uh oh, needs a challenge!</div>`
+      `<div>Edit the gadget to add some challenges!</div>`
 
 window.SorterView = SorterView

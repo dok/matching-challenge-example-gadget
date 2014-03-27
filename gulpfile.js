@@ -37,5 +37,6 @@ gulp.task('vendor', function() {
 });
 
 gulp.task('default', function() {
+  fs.removeSync('./assets/lib');
   gulp.run('common', 'coffee', 'coffee-react-views', 'vendor');
 });
