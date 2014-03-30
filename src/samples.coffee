@@ -1,5 +1,5 @@
 samples =
-  spanishPhrases: ->
+  'spanish phrases': ->
     prompt = _.map spanishPhrases, (phrase) ->
       name:
         type: 'text'

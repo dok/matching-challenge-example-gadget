@@ -22,7 +22,7 @@ AuthorView = React.createClass
         <button onClick={this.handleClick.bind(this, 'versalers')}>Use versalers challenge</button>
       </div>
       <div>
-        <button onClick={this.handleClick.bind(this, 'spanishPhrases')}>Use Spanish phrase challenge</button>
+        <button onClick={this.handleClick.bind(this, 'spanish phrases')}>Use Spanish phrase challenge</button>
       </div>
       <div>
         <button onClick={this.handleClick.bind(this, 'colors')}>Use colors challenge</button>
