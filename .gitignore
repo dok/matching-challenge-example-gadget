@@ -2,4 +2,10 @@ dist
 bundle.zip
 node_modules
 dist
-lib
+assets/sample_data
+assets/vendor
+assets/views
+assets/gadget.js
+assets/index.html
+assets/vent.js
+assets/samples.js

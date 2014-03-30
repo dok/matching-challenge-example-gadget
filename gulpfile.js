@@ -10,33 +10,42 @@ gulp.task('common', function() {
 });
 
 gulp.task('coffee', function() {
-  fs.removeSync('./assets/lib/plugins');
-
   gulp.src([
     '!./src/views/**/*.coffee',
     './src/**/*.coffee'
   ])
     .pipe(coffee().on('error', gutil.log))
-    .pipe(gulp.dest('./assets/lib'));
+    .pipe(gulp.dest('./assets'));
 });
 
 gulp.task('coffee-react-views', function() {
-  fs.removeSync('./assets/lib/views');
-
   gulp.src('./src/views/**/*.coffee')
     .pipe(coffee({ bare: true, header: false }).on('error', gutil.log))
     .pipe(react())
-    .pipe(gulp.dest('./assets/lib/views'));
+    .pipe(gulp.dest('./assets/views'));
 });
 
 gulp.task('vendor', function() {
-  fs.removeSync('./assets/lib/vendor');
-
   return gulp.src('./src/vendor/**')
-    .pipe(gulp.dest('./assets/lib/vendor'));
+    .pipe(gulp.dest('./assets/vendor'));
+});
+
+// TEMP until `index.html` in root is in production
+gulp.task('index', function() {
+  return gulp.src('./src/index.html')
+    .pipe(gulp.dest('./assets'));
 });
 
 gulp.task('default', function() {
-  fs.removeSync('./assets/lib');
-  gulp.run('common', 'coffee', 'coffee-react-views', 'vendor');
+  // TODO This means delete everything but real assets.
+  // This won't be needed when `index.html` in root is
+  // in production
+  fs.removeSync('./assets/sample-data');
+  fs.removeSync('./assets/vendor');
+  fs.removeSync('./assets/views');
+  fs.removeSync('./assets/gadget.js');
+  fs.removeSync('./assets/sample.js');
+  fs.removeSync('./assets/vent.js');
+
+  gulp.run('common', 'coffee', 'coffee-react-views', 'vendor', 'index');
 });
