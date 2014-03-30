@@ -1,5 +1,7 @@
 attached = false
 
+sorter = SorterView()
+
 window.addEventListener 'message', (event) ->
   try
     message = JSON.parse event.data
@@ -7,7 +9,6 @@ window.addEventListener 'message', (event) ->
   return unless message
 
   if message.event == 'attached'
-    sorter = SorterView()
     React.renderComponent sorter, document.body
   else
     vent.trigger message.event, message.data
