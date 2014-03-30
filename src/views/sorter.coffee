@@ -109,6 +109,7 @@ SorterView = React.createClass
     responses: []
 
   componentWillMount: ->
+    @handleLearnerStateChanged @props.learnerState
     vent.on 'scoresChanged', @handleScoresChanged
     vent.on 'setEditable', @handleEditableness
     vent.on 'challengesChanged', @handleChallenges
