@@ -43,7 +43,6 @@ gulp.task('default', function() {
   fs.removeSync('./assets/sample-data');
   fs.removeSync('./assets/vendor');
   fs.removeSync('./assets/views');
-  fs.removeSync('./assets/gadget.js');
   fs.removeSync('./assets/sample.js');
   fs.removeSync('./assets/vent.js');
 
