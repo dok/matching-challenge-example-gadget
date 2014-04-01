@@ -3,12 +3,8 @@ attributes = learnerState = null
 
 # Handle incoming events from the player
 window.addEventListener 'message', (event) ->
-  # Parse JSON
-  try
-    message = JSON.parse event.data
-  catch error then console.error 'Error:', error
-  # Json is no good, let's bail
-  return unless message
+
+  message = event.data
 
   if message.event == 'attached'
     attached = true
@@ -30,5 +26,4 @@ window.addEventListener 'message', (event) ->
 
 # Rebroadcast all internal events to the player
 vent.on 'all', (event, data) ->
-  message = JSON.stringify { event, data }
-  window.parent.postMessage message, '*'
+  window.parent.postMessage { event, data }, '*'
