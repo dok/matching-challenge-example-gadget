@@ -1,0 +1,11 @@
+{
+  "username": "versal",
+  "name": "matcher-challenge",
+  "version": "0.0.1",
+  "title": "Matching challenge",
+  "description": "Matching challenge",
+  "author": "Versal",
+  "launcher" : "iframe",
+  "defaultConfig": {},
+  "defaultUserState": {}
+}
