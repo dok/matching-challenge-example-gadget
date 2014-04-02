@@ -6,7 +6,7 @@ var fs = require('fs-extra');
 
 gulp.task('styles', function() {
   return gulp.src('src/gadget.css')
-    .pipe(gulp.dest('./lib/gadget.css'));
+    .pipe(gulp.dest('./lib'));
 });
 
 gulp.task('coffee', function() {
@@ -39,5 +39,5 @@ gulp.task('index', function() {
 gulp.task('default', function() {
   fs.removeSync('./lib');
 
-  gulp.run('coffee', 'coffee-react-views', 'vendor', 'index');
+  gulp.run('styles', 'coffee', 'coffee-react-views', 'vendor', 'index');
 });
