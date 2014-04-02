@@ -6,7 +6,6 @@
   "description": "Sorter [DEMO]",
   "author": "Versal",
   "launcher" : "iframe",
-  "defaultConfig": {
-  },
+  "defaultConfig": {},
   "defaultUserState": {}
 }
