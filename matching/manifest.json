@@ -5,8 +5,8 @@
   "title": "Sorter [DEMO]",
   "description": "Sorter [DEMO]",
   "author": "Versal",
+  "launcher" : "iframe",
   "defaultConfig": {
-    "__launcher": "iframe"
   },
   "defaultUserState": {}
 }
