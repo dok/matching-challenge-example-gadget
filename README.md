@@ -1,5 +1,19 @@
-# Challenges gadgets
+# Matching gadget
 
-Some sample gadgets that use challenges API
+A non-trivial challenges gadget
 
-* [Matching](matching/README.md)
+## Pre-requisites
+
+    npm install gulp --global
+
+## Install
+
+    npm install
+
+## Build
+
+    gulp
+
+## Preview
+
+    versal preview
