@@ -4,12 +4,12 @@ A non-trivial challenges gadget
 
 ## Install
 
-npm install
+    npm install
 
 ## Build
 
-gulp
+    gulp
 
 ## Preview
 
-versal preview
+    versal preview
