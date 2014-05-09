@@ -4,11 +4,11 @@ A non-trivial challenges gadget
 
 ## Pre-requisites
 
-    npm install gulp --global
+    npm install gulp bower --global
 
 ## Install
 
-    npm install
+    npm install; bower install
 
 ## Build
 

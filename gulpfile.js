@@ -25,11 +25,6 @@ gulp.task('coffee-react-views', function() {
     .pipe(gulp.dest('./lib/views'));
 });
 
-gulp.task('vendor', function() {
-  return gulp.src('./src/vendor/**')
-    .pipe(gulp.dest('./lib/vendor'));
-});
-
 // TEMP until `index.html` in root is in production
 gulp.task('index', function() {
   return gulp.src('./src/index.html')
@@ -39,5 +34,5 @@ gulp.task('index', function() {
 gulp.task('default', function() {
   fs.removeSync('./lib');
 
-  gulp.run('styles', 'coffee', 'coffee-react-views', 'vendor', 'index');
+  gulp.run('styles', 'coffee', 'coffee-react-views', 'index');
 });
