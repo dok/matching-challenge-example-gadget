@@ -16,7 +16,7 @@ SorterView = React.createClass
     vent.on 'learnerStateChanged', @handleLearnerStateChanged
 
   componentDidMount: ->
-    vent.trigger 'setHeight', pixels: 260
+    playerTrigger 'setHeight', pixels: 260
 
   componentWillUnmount: ->
     vent.off 'scoresChanged', @handleScoresChanged
@@ -42,14 +42,14 @@ SorterView = React.createClass
 
   handleReset: ->
     # NOTE might be something we want the API to do for us, e.g. { event: 'resetScores' }
-    vent.trigger 'scoreChallenges', [[]]
+    playerTrigger 'scoreChallenges', [[]]
 
   scoreChallenge: (_response) ->
     responses = _.clone @state.responses
     response = _.first(responses) || []
 
     response[@state.currentPairIndex] = _response
-    vent.trigger 'scoreChallenges', [response]
+    playerTrigger 'scoreChallenges', [response]
 
   render: ->
     if @state.editable

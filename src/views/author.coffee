@@ -4,8 +4,8 @@ AuthorView = React.createClass
 
   handleClick: (challengeName) ->
     challenge = samples.getChallenge challengeName
-    vent.trigger 'setLearnerState', { challengeName }
-    vent.trigger 'setChallenges', [challenge]
+    playerTrigger 'setLearnerState', { challengeName }
+    playerTrigger 'setChallenges', [challenge]
     @props.handleReset()
 
   render: ->
