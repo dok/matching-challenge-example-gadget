@@ -9,6 +9,7 @@ window.addEventListener 'message', (event) ->
 window.playerTrigger = (event, data) ->
   window.parent.postMessage { event, data }, '*'
 
+window.challengesApi = new ChallengesIframeApi (options) -> vent.trigger 'updateChallenges', options
 
 document.addEventListener 'DOMContentLoaded', ->
   React.renderComponent SorterView(attributes: {}, learnerState: {}), document.body
